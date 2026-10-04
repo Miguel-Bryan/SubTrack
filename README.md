@@ -1,6 +1,6 @@
 # SubTrack
 
-A small web app for two people to run a subscription-reselling business: clients, the subscriptions they bought, payments and balances, the subscriptions you buy from providers (with seats), expenses, and monthly profit.
+A small web app for people to run a subscription-reselling business: clients, the subscriptions they bought, payments and balances, the subscriptions you buy from providers (with seats), expenses, and monthly profit.
 
 Stack: Next.js 15 (App Router) + TypeScript, Tailwind CSS v4, Prisma, SQLite locally, PostgreSQL on Vercel.
 
