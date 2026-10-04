@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+
+  --color-canvas: #f2f4f1;
+  --color-ink: #17211f;
+  --color-muted: #5d6b68;
+  --color-line: #dde3df;
+
+  --color-pine-950: #0a211e;
+  --color-pine-900: #0f2f2b;
+  --color-pine-800: #17413b;
+  --color-pine-700: #1f5750;
+  --color-pine-300: #a3c9c1;
+  --color-pine-100: #dcefeb;
+
+  --color-brand-50: #e8f5f2;
+  --color-brand-100: #cfe9e3;
+  --color-brand-600: #0d7a6d;
+  --color-brand-700: #0a6258;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-canvas text-ink antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}
+
+@layer components {
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger,
+  .btn-ghost,
+  .btn-danger-ghost {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply bg-brand-600 text-white hover:bg-brand-700;
+  }
+  .btn-secondary {
+    @apply border border-line bg-white text-ink hover:bg-slate-50;
+  }
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+  .btn-ghost {
+    @apply text-brand-700 hover:bg-brand-50;
+  }
+  .btn-danger-ghost {
+    @apply text-red-700 hover:bg-red-50;
+  }
+  .btn-sm {
+    @apply px-2.5 py-1.5 text-xs;
+  }
+
+  .input {
+    @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-ink shadow-sm placeholder:text-slate-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 focus:outline-none disabled:bg-slate-100 disabled:text-slate-500;
+  }
+  .input[aria-invalid="true"] {
+    @apply border-red-500;
+  }
+  .label {
+    @apply mb-1 block text-sm font-medium text-ink;
+  }
+
+  .panel {
+    @apply rounded-xl border border-line bg-white;
+  }
+  .table-wrap {
+    @apply overflow-x-auto;
+  }
+  .data-table {
+    @apply w-full text-left text-sm;
+  }
+  .data-table th {
+    @apply bg-slate-50 px-4 py-2.5 text-xs font-semibold whitespace-nowrap text-muted;
+  }
+  .data-table td {
+    @apply border-t border-line px-4 py-3 align-middle;
+  }
+  .num {
+    @apply text-right tabular-nums;
+  }
+}

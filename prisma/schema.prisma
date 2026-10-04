@@ -1,0 +1,102 @@
+// SubTrack database schema.
+//
+// To deploy on PostgreSQL (Vercel), change the provider below from "sqlite" to
+// "postgresql" and set DATABASE_URL to your Postgres connection string.
+// Nothing else needs to change: no enums, money is stored as whole XAF (Int).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  username     String    @unique // email or username used to sign in
+  passwordHash String
+  role         String    @default("COLLABORATOR") // ADMIN | COLLABORATOR
+  createdAt    DateTime  @default(now())
+  payments     Payment[]
+}
+
+model Client {
+  id              String               @id @default(cuid())
+  fullName        String
+  phone           String
+  accountUsername String // username / profile name the client uses on the platform
+  notes           String?
+  createdAt       DateTime             @default(now()) // "date added"
+  subscriptions   ClientSubscription[]
+}
+
+// A subscription we sold to a client. Paid amount, balance and due/overdue
+// state are always computed from price + payments (see src/lib/status.ts).
+model ClientSubscription {
+  id             String    @id @default(cuid())
+  clientId       String
+  client         Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  platform       String
+  plan           String
+  startDate      DateTime
+  durationMonths Int // 1, 2 or 3
+  endDate        DateTime // = startDate + durationMonths (also the payment due date)
+  price          Int // selling price in XAF
+  status         String    @default("ACTIVE") // ACTIVE | RENEWED | ENDED
+  notes          String?
+  createdAt      DateTime  @default(now())
+  payments       Payment[]
+
+  @@index([clientId])
+  @@index([endDate])
+}
+
+model Payment {
+  id             String             @id @default(cuid())
+  subscriptionId String
+  subscription   ClientSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  amount         Int
+  paidAt         DateTime
+  method         String // MTN MoMo | Orange Money | Cash | Bank Transfer | Other
+  reference      String?
+  notes          String?
+  recordedById   String?
+  recordedBy     User?              @relation(fields: [recordedById], references: [id], onDelete: SetNull)
+  createdAt      DateTime           @default(now())
+
+  @@index([subscriptionId])
+  @@index([paidAt])
+}
+
+// A subscription WE buy from a provider and resell seats of.
+model ProviderSubscription {
+  id                String   @id @default(cuid())
+  platform          String
+  accountIdentifier String?
+  purchaseDate      DateTime
+  renewalDate       DateTime
+  cost              Int // XAF per billing period
+  billingMonths     Int      @default(1)
+  capacity          Int      @default(1)
+  occupiedSeats     Int      @default(0)
+  notes             String?
+  status            String   @default("ACTIVE") // ACTIVE | CANCELLED
+  createdAt         DateTime @default(now())
+
+  @@index([renewalDate])
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  name      String
+  amount    Int
+  spentAt   DateTime
+  category  String
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([spentAt])
+}
